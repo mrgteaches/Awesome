@@ -75,9 +75,7 @@ database.ref("/antscores").limitToLast(1).on("child_added", function (snapshot) 
         })
     })
 })
-
-
-
+//Ends firebase stuff
 
 
 var game = {
@@ -101,7 +99,6 @@ var game = {
         var RNGseed = Math.floor(Math.random() * game.wordBank.length);
         game.correctSeed = RNGseed;
         game.questionWord = game.wordBank[game.correctSeed];
-
         //fill in the choices table
         var arr = [];
         while (arr.length < 4) {
@@ -109,7 +106,6 @@ var game = {
             if (arr.indexOf(r) === -1 && r !== game.correctSeed) { arr.push(r) };
         }
         game.choices = arr;
-
     },
 
     correctChoiceSelect: function () {
@@ -137,14 +133,11 @@ var game = {
         dictionaryAPI.getDataAntonym(game.questionWord);
     },
 
-
-
     statsReset: function () {
         game.score = 0;
         game.life = 3;
         $("#life").text(game.life)
         $("#score").text(game.score);
-
     },
 
     createNextButton: function (gamemode) {
@@ -156,7 +149,6 @@ var game = {
             gamemode();
             $(this).remove();
             $(".choiceBtn").attr("disabled", false)
-
         })
     },
 
@@ -167,7 +159,8 @@ var game = {
             "score": score
         })
     }
-}
+
+} //closes game object
 
 var dictionaryAPI = {
     result: {},
@@ -193,7 +186,6 @@ var dictionaryAPI = {
                 $("#answer" + (parseInt(i) + parseInt(1))).text(game.wordBank[game.choices[i]]);
                 $("#answer" + (parseInt(i) + parseInt(1))).on("click", function () {
                     $(".choiceBtn").attr("disabled", true)
-
                     console.log("wrong")
                     $("#startBtn").show();
                     $("#gameResult").empty();
@@ -201,24 +193,20 @@ var dictionaryAPI = {
                     $("#gameResult").append(newP);
                     giphyAPI.createRewardImage("#gameResult", "fail", giphyAPI.offsetRNG(10));
 
-
                     if (game.challengeMode) {
                         game.life--;
                         $("#life").text(game.life)
                         if (game.life == 0) {
                             $("#gameoverDisplay").show()
                             game.scorePath = "/defscores"
-
                         } else {
                             game.createNextButton(game.definitionMode);
-
                         }
                     } else {
                         game.createNextButton(game.definitionMode);
-
                     }
                 })
-            }
+            } // closes for loop
 
             game.correctChoiceSelect();
 
@@ -226,7 +214,6 @@ var dictionaryAPI = {
             $("#" + game.correctChoice).off();
             $("#" + game.correctChoice).on("click", function () {
                 $(".choiceBtn").attr("disabled", true)
-
                 console.log("correct")
                 $("#startBtn").show();
                 $("#gameResult").empty();
@@ -241,10 +228,10 @@ var dictionaryAPI = {
                     game.score++;
                     $("#score").text(game.score);
                 }
-            })
+            }) //closes on click function
 
-        });
-    },
+        }); //closes ajax call
+    },  // closes getDataDefinition function
 
     getDataSynonym: function (word) {
 
@@ -291,20 +278,16 @@ var dictionaryAPI = {
                             if (game.life == 0) {
                                 $("#gameoverDisplay").show()
                                 game.scorePath = "/synscores"
-
-
                             } else {
                                 game.createNextButton(game.synonymMode);
-
                             }
-
                         } else {
                             game.createNextButton(game.synonymMode);
-
                         }
-                    })
+                    }) //closes on click function
 
-                }
+                } //closes for loop
+
                 //creating correct choice
                 // if (dictionaryAPI.synonyms.length > 1) {
                 //     dictionaryAPI.Qsynonym = dictionaryAPI.synonyms[0][Math.floor(Math.random() * dictionaryAPI.synonyms.length)];
@@ -347,13 +330,12 @@ var dictionaryAPI = {
                     if (game.challengeMode) {
                         game.score++;
                         $("#score").text(game.score)
-
                     }
-                })
+                }) //closes on click
                 // }
-            }
-        });
-    },
+            } //closes if statement
+        }); //closes ajax call
+    },  // closes getDataSynonym
 
     getDataAntonym: function (word) {
         $.ajax({
@@ -442,13 +424,13 @@ var dictionaryAPI = {
                         game.score++;
                         $("#score").text(game.score)
                     }
-                })
+                }) //closes on click
                 // }
-            }
-        });
-    },
+            } //closes if statement
+        }); //closes ajax call
+    }, //closes getDataAntonym
 
-}
+}  //closes dictionaryAPI object
 
 var giphyAPI = {
 
@@ -474,7 +456,6 @@ var giphyAPI = {
             var newImage = $("<img>");
             newImage.attr("src", response.data[0].images.fixed_height.url);
             $(appendLocation).append(newImage)
-
         });
     },
 
@@ -483,7 +464,7 @@ var giphyAPI = {
         return offsetSeed
     }
 
-}
+} //closes giphyAPI object
 
 $(document).ready(function () {
     $('.tap-target').tapTarget();
@@ -514,10 +495,6 @@ $(document).ready(function () {
     $('.tabs').tabs();
     M.updateTextFields();
 
-
-
-
-
     $("#defModePractice").on("click", function () {
         game.definitionMode();
         game.challengeMode = false;
@@ -525,57 +502,43 @@ $(document).ready(function () {
         $("#gameDisplay").show();
         $("#gameMode").hide();
         $("#challengeStats").hide();
-
-
     })
 
     $("#synModePractice").on("click", function () {
         game.synonymMode();
         game.challengeMode = false;
-
         $("#modeInstructions").hide();
         $("#gameDisplay").show();
         $("#gameMode").hide();
         $("#challengeStats").hide();
-
-
     })
-
 
     $("#antModePractice").on("click", function () {
         game.antonymMode();
         game.challengeMode = false;
-
         $("#modeInstructions").hide();
         $("#gameDisplay").show();
         $("#gameMode").hide();
         $("#challengeStats").hide();
-
-
     })
 
     $("#defModeChallenge").on("click", function () {
         game.definitionMode();
         game.challengeMode = true;
-
         $("#modeInstructions").hide();
         $("#gameDisplay").show();
         $("#gameMode").hide();
         $("#challengeStats").show();
-
-
     })
 
     $("#synModeChallenge").on("click", function () {
         game.synonymMode();
         game.challengeMode = true;
-
         $("#modeInstructions").hide();
         $("#gameDisplay").show();
         $("#gameMode").hide();
         $("#challengeStats").show();
     })
-
 
     $("#antModeChallenge").on("click", function () {
         game.antonymMode();
@@ -584,7 +547,6 @@ $(document).ready(function () {
         $("#gameDisplay").show();
         $("#gameMode").hide();
         $("#challengeStats").show();
-
     })
 
     // Stuff Richard Added
@@ -602,7 +564,6 @@ $(document).ready(function () {
         $("#scoreEnter").text("Submit Your Score");
 
         game.statsReset();
-
     })
 
     // Triggers the modal to submit high score
@@ -672,8 +633,6 @@ $(document).ready(function () {
                 $("#defHighScoresFull").prepend(newRow);
             })
         })
-
-
     })
 
     $("#synHSFullLink").on("click", function () {
@@ -695,8 +654,6 @@ $(document).ready(function () {
                 $("#synHighScoresFull").prepend(newRow);
             })
         })
-
-
     })
 
     $("#antHSFullLink").on("click", function () {
@@ -718,21 +675,14 @@ $(document).ready(function () {
                 $("#antHighScoresFull").prepend(newRow);
             })
         })
-
-
     })
-
 
 
     // Instruction FeatureDiscovery Function
 
-
     //Antonym Mode
-
-
     $("#pic1").click(function () {
         $(".antText").show();
-
     });
 
     $("#pic1").click(function () {
@@ -769,7 +719,7 @@ $(document).ready(function () {
         $(".defText").show();
     });
 
-})
+})  //closes document ready
 
 
 
